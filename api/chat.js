@@ -1,5 +1,3 @@
-import db from '../server/db.js';
-
 const EMOTIONAL_TEMPLATES = {
   English: {
     worried: "❤️ **I hear you, and I understand that farming can be incredibly stressful.**\n\nBetween low milk prices, erratic weather, and rising feed costs, it's completely natural to feel overwhelmed. Remember, you are not alone in this.\n\n* **My Recommendation:** Let's focus on factors we can control. If feed costs are draining profits, we can review crop rotation or check local pasture biomass density (using NDVI). Let's take it step-by-step. How can I help you calculate your margins today?",
@@ -33,7 +31,8 @@ export default async function handler(req, res) {
   }
 
   try {
-    const { message = '', imagePreset, customImage, language = 'Hinglish' } = req.body || {};
+    const body = typeof req.body === 'string' ? JSON.parse(req.body) : (req.body || {});
+    const { message = '', imagePreset, customImage, language = 'Hinglish' } = body;
     const lower = message.toLowerCase();
 
     // Check for Gemini API key header or env var
@@ -81,6 +80,8 @@ export default async function handler(req, res) {
       replyText = "📉 **Transaction Recorded:**\n\nLogged new Expense transaction in the financial ledger.\n* **Amount:** ₹1,800\n* **Category:** Cattle Feed / Fodder\n* **Updated Net Profit:** ₹8,800";
     } else if (lower.includes('feed') || lower.includes('diet') || lower.includes('चारा') || lower.includes('दाना') || imagePreset || customImage) {
       replyText = "🌾 **HerdIntel AI Balanced Cattle Diet Plan:**\n\nBased on your cow's profile and multi-modal assessment:\n\n* 🌿 **Green Fodder (हरा चारा):** 20 - 25 kg/day (Napier / Berseem)\n* 🌾 **Dry Fodder (सूखा भूसा):** 5 - 6 kg/day (Wheat straw / Jowar)\n* 🥛 **Concentrate Feed (पशु आहार/दाना):** 3.5 - 4 kg/day (High protein)\n* 🧪 **Mineral Mixture (खनिज मिश्रण):** 50 - 100g daily with clean fresh water.\n\n*Tip: Maintain consistent feeding times to maximize daily milk yield by 10-15%.*";
+    } else if (lower.includes('cow') || lower.includes('tag') || lower.includes('101') || lower.includes('102') || lower.includes('402')) {
+      replyText = "🐄 **Cow #402 Biometric Health Summary:**\n\n* **Status:** Under Observation\n* **Social Isolation Index:** 34.2% average (Peak: 94% during isolation window)\n* **Acoustic Cough Count:** 1.4/hr (Peak: 9/hr)\n* **Action Plan:** Maintain isolation in Pen B and continue monitoring respiratory rate.";
     } else {
       replyText = langTemplates.defaultReply;
     }
