@@ -4,8 +4,9 @@
   "rewrites": [
     { "source": "/api/health", "destination": "/api/health" },
     { "source": "/api/dashboard/summary", "destination": "/api/dashboard" },
-    { "source": "/api/finances", "destination": "/api/finances" },
-    { "source": "/api/(.*)", "destination": "/api/index" },
+    { "source": "/api/finances(.*)", "destination": "/api/finances" },
+    { "source": "/api/alerts(.*)", "destination": "/api/alerts" },
+    { "source": "/api/cows(.*)", "destination": "/api/cows" },
     { "source": "/(.*)", "destination": "/index.html" }
   ]
 }
