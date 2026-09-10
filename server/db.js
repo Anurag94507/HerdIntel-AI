@@ -61,8 +61,8 @@ const mockTelemetry = Array.from({ length: 24 }, (_, i) => ({
 }));
 
 const mockFinances = [
-  { id: 1, date: new Date().toISOString().split('T')[0], type: 'Sale', category: 'Milk Sales', amount: 15400, description: 'Bulk morning milk delivery (350L)' },
-  { id: 2, date: new Date(Date.now() - 86400000).toISOString().split('T')[0], type: 'Expense', category: 'Cattle Feed', amount: 4800, description: 'High-protein fodder & mineral supplement' }
+  { id: 1, entry_type: 'Sale', amount: 15400, category: 'Milk Sales', description: 'Bulk morning milk delivery (350L)', created_at: new Date().toISOString() },
+  { id: 2, entry_type: 'Expenditure', amount: 4800, category: 'Cattle Feed', description: 'High-protein fodder & mineral supplement', created_at: new Date(Date.now() - 86400000).toISOString() }
 ];
 
 function createFallbackDb() {
@@ -71,30 +71,70 @@ function createFallbackDb() {
       const lowerSql = (sql || '').toLowerCase();
       return {
         get: (...params) => {
+          // Cows count
           if (lowerSql.includes('from cows') && lowerSql.includes('count')) {
-            return { count: mockCows.length };
+            return { count: mockCows.length, c: mockCows.length };
           }
+          // Alerts count
           if (lowerSql.includes('from ai_alerts') && lowerSql.includes('count')) {
             if (lowerSql.includes("risk_level = 'high'")) {
               return { count: mockAlerts.filter(a => a.risk_level === 'High' && a.resolution_status === 'Open').length };
             }
             return { count: mockAlerts.filter(a => a.resolution_status === 'Open').length };
           }
-          if (lowerSql.includes('avg(isolation_score)') || lowerSql.includes('sensor_telemetry')) {
-            if (lowerSql.includes('avg')) return { avg: 34.2, count: 240 };
-            return { count: 240 };
+          // Sensor Telemetry aggregates
+          if (lowerSql.includes('sensor_telemetry')) {
+            return {
+              avg: 34.2,
+              count: 240,
+              avg_isolation: 34.2,
+              avg_cough: 1.4,
+              max_isolation: 94,
+              max_cough: 9,
+              total_readings: 840,
+              min_isolation: 12,
+              readings: 24
+            };
           }
+          // Financial aggregates
+          if (lowerSql.includes('farmer_finances')) {
+            return {
+              totalSales: 15400,
+              totalExpenditures: 4800
+            };
+          }
+          // Report audit aggregates
+          if (lowerSql.includes('high_alerts')) {
+            return {
+              total_alerts: 3,
+              high_alerts: 1,
+              medium_alerts: 1,
+              low_alerts: 1,
+              resolved: 1
+            };
+          }
+          // Single cow fetch
           if (lowerSql.includes('from cows where id =')) {
             const id = params[0] || 1;
             return mockCows.find(c => c.id === Number(id)) || mockCows[0];
           }
-          return { count: 10, avg: 28.5 };
+          return { count: 10, c: 10, avg: 34.2, totalSales: 15400, totalExpenditures: 4800 };
         },
         all: (...params) => {
           if (lowerSql.includes('from cows')) {
-            if (params.length > 0) {
+            if (params.length > 0 && !lowerSql.includes('left join')) {
               const id = Number(params[0]);
               return mockCows.filter(c => c.id === id);
+            }
+            if (lowerSql.includes('left join')) {
+              return mockCows.map(c => ({
+                tag_number: c.tag_number,
+                breed: c.breed,
+                current_status: c.current_status,
+                avg_isolation: 28.5,
+                avg_cough: 1.2,
+                alert_count: c.id === 2 ? 1 : 0
+              }));
             }
             return mockCows;
           }
@@ -104,8 +144,11 @@ function createFallbackDb() {
           if (lowerSql.includes('from sensor_telemetry')) {
             return mockTelemetry;
           }
-          if (lowerSql.includes('from farm_finances')) {
+          if (lowerSql.includes('from farmer_finances')) {
             return mockFinances;
+          }
+          if (lowerSql.includes('from welfare_audits')) {
+            return [];
           }
           return [];
         },
