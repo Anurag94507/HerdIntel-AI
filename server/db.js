@@ -1,10 +1,7 @@
 import { readFileSync, copyFileSync, existsSync } from 'fs';
-import { join, dirname } from 'path';
-import { fileURLToPath } from 'url';
+import { join } from 'path';
 
-const __dirname = dirname(fileURLToPath(import.meta.url));
-
-let dbPath = join(__dirname, '..', 'cownet.db');
+let dbPath = join(process.cwd(), 'cownet.db');
 
 if (process.env.VERCEL || process.env.NETLIFY || process.env.AWS_LAMBDA_FUNCTION_NAME) {
   const tmpDbPath = '/tmp/cownet.db';
@@ -20,7 +17,6 @@ if (process.env.VERCEL || process.env.NETLIFY || process.env.AWS_LAMBDA_FUNCTION
   }
 }
 
-// In-Memory Seed Data for Serverless Environment
 const mockCows = [
   { id: 1, tag_number: '401', breed: 'Holstein', birth_date: '2020-03-15', current_status: 'Healthy' },
   { id: 2, tag_number: '402', breed: 'Holstein', birth_date: '2019-11-22', current_status: 'Under Observation' },
@@ -72,7 +68,7 @@ const mockFinances = [
 function createFallbackDb() {
   return {
     prepare: (sql) => {
-      const lowerSql = sql.toLowerCase();
+      const lowerSql = (sql || '').toLowerCase();
       return {
         get: (...params) => {
           if (lowerSql.includes('from cows') && lowerSql.includes('count')) {
@@ -133,7 +129,7 @@ try {
   try { db.pragma('journal_mode = WAL'); } catch (e) {}
   try { db.pragma('foreign_keys = ON'); } catch (e) {}
 
-  const schemaPath = join(__dirname, '..', 'schema.sql');
+  const schemaPath = join(process.cwd(), 'schema.sql');
   if (existsSync(schemaPath)) {
     try {
       const schema = readFileSync(schemaPath, 'utf-8');
