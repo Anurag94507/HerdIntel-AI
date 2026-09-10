@@ -3,6 +3,8 @@
   "outputDirectory": "client/dist",
   "rewrites": [
     { "source": "/api/health", "destination": "/api/health" },
+    { "source": "/api/dashboard/summary", "destination": "/api/dashboard" },
+    { "source": "/api/finances", "destination": "/api/finances" },
     { "source": "/api/(.*)", "destination": "/api/index" },
     { "source": "/(.*)", "destination": "/index.html" }
   ]
