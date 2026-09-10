@@ -20,32 +20,35 @@ if (process.env.VERCEL || process.env.NETLIFY || process.env.AWS_LAMBDA_FUNCTION
   }
 }
 
-let db = null;
-
-try {
-  const { default: Database } = await import('better-sqlite3');
-  db = new Database(dbPath);
-  try { db.pragma('journal_mode = WAL'); } catch (e) {}
-  try { db.pragma('foreign_keys = ON'); } catch (e) {}
-
-  const schemaPath = join(__dirname, '..', 'schema.sql');
-  if (existsSync(schemaPath)) {
-    try {
-      const schema = readFileSync(schemaPath, 'utf-8');
-      db.exec(schema);
-    } catch (e) {}
+function getDatabase() {
+  try {
+    // Synchronous require for serverless Node execution
+    const Database = require('better-sqlite3');
+    const instance = new Database(dbPath);
+    try { instance.pragma('journal_mode = WAL'); } catch (e) {}
+    try { instance.pragma('foreign_keys = ON'); } catch (e) {}
+    const schemaPath = join(__dirname, '..', 'schema.sql');
+    if (existsSync(schemaPath)) {
+      try {
+        const schema = readFileSync(schemaPath, 'utf-8');
+        instance.exec(schema);
+      } catch (e) {}
+    }
+    return instance;
+  } catch (err) {
+    console.warn('SQLite native module unavailable, using fallback mock:', err?.message);
+    return {
+      prepare: () => ({
+        get: () => ({}),
+        all: () => [],
+        run: () => ({ lastInsertRowid: 1, changes: 1 })
+      }),
+      exec: () => {},
+      pragma: () => {}
+    };
   }
-} catch (err) {
-  console.warn('SQLite native module unavailable in serverless lambda, using fallback:', err?.message);
-  db = {
-    prepare: () => ({
-      get: () => ({}),
-      all: () => [],
-      run: () => ({ lastInsertRowid: 1, changes: 1 })
-    }),
-    exec: () => {},
-    pragma: () => {}
-  };
 }
+
+const db = getDatabase();
 
 export default db;
