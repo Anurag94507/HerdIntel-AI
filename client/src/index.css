@@ -1,0 +1,261 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* ── Premium Agricultural Mint & Emerald Design Tokens ──────────────── */
+:root {
+  --color-brand-primary:   #059669; /* Emerald 600 */
+  --color-brand-light:     #34d399; /* Emerald 400 */
+  --color-brand-dark:      #064e3b; /* Emerald 900 */
+  
+  --color-accent-teal:     #0891b2; /* Cyan 600 */
+  --color-accent-orange:   #ea580c; /* Orange 600 */
+  --color-accent-red:      #dc2626; /* Red 600 */
+  --color-accent-purple:   #7e22ce; /* Purple 700 */
+
+  --bg-primary:            #f8fafc; /* Sleek light slate/grey */
+  --bg-surface:            #ffffff; /* Card background */
+  --border-delicate:       rgba(226, 232, 240, 0.7); /* Slate 200 light border */
+  --border-premium:        rgba(16, 185, 129, 0.15); /* Emerald border highlight */
+
+  --font-sans:             'Inter', system-ui, -apple-system, sans-serif;
+  --font-mono:             'JetBrains Mono', 'Fira Code', monospace;
+
+  --shadow-sm:             0 2px 8px rgba(0, 0, 0, 0.02);
+  --shadow-md:             0 8px 24px -4px rgba(0, 0, 0, 0.04), 0 2px 8px -2px rgba(0, 0, 0, 0.02);
+  --shadow-lg:             0 20px 40px -8px rgba(22, 163, 74, 0.05), 0 4px 16px -4px rgba(0, 0, 0, 0.02);
+}
+
+/* ── Base Layer Customizations ─────────────────────────────────────────── */
+body {
+  font-family: var(--font-sans);
+  background-color: var(--bg-primary);
+  color: #0f172a; /* Slate 900 */
+  min-height: 100vh;
+  overflow-x: hidden;
+  -webkit-font-smoothing: antialiased;
+}
+
+/* Custom Premium Scrollbars */
+* {
+  scrollbar-width: thin;
+  scrollbar-color: rgba(5, 150, 105, 0.2) transparent;
+}
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+::-webkit-scrollbar-thumb {
+  background: rgba(5, 150, 105, 0.2);
+  border-radius: 99px;
+  border: 1px solid transparent;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: rgba(5, 150, 105, 0.4);
+}
+
+/* ── Keyframes & Animations ────────────────────────────────────────────── */
+@keyframes premiumFadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(12px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes premiumSlideInLeft {
+  from {
+    transform: translateX(-100%);
+  }
+  to {
+    transform: translateX(0);
+  }
+}
+
+@keyframes wave {
+  0%, 100% { height: 4px; }
+  50% { height: 16px; }
+}
+
+.animate-fade-in-up {
+  animation: premiumFadeInUp 0.4s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+.animate-fade-in {
+  animation: premiumFadeInUp 0.25s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+.animate-slide-in-left {
+  animation: premiumSlideInLeft 0.3s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+/* Audio Wave Visualizer Bars */
+.audio-bar-1 { animation: wave 0.6s ease-in-out infinite alternate; }
+.audio-bar-2 { animation: wave 0.8s ease-in-out infinite alternate 0.15s; }
+.audio-bar-3 { animation: wave 0.5s ease-in-out infinite alternate 0.3s; }
+.audio-bar-4 { animation: wave 0.7s ease-in-out infinite alternate 0.45s; }
+
+/* ── Premium Styling Components ────────────────────────────────────────── */
+@layer components {
+  /* Translucent Glassmorphic Cards */
+  .premium-card {
+    background-color: var(--bg-surface);
+    border: 1px solid var(--border-delicate);
+    border-radius: 16px;
+    box-shadow: var(--shadow-md);
+    transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+  }
+
+  .premium-card-hover {
+    @apply premium-card;
+  }
+  .premium-card-hover:hover {
+    transform: translateY(-3px);
+    border-color: var(--border-premium);
+    box-shadow: 0 12px 30px -4px rgba(5, 150, 105, 0.08), var(--shadow-lg);
+  }
+
+  /* Interactive Form Control Inputs */
+  .premium-input {
+    background-color: var(--bg-surface);
+    border: 1px solid #cbd5e1;
+    border-radius: 12px;
+    padding: 10px 16px;
+    font-size: 13px;
+    color: #1e293b;
+    outline: none;
+    transition: all 0.2s ease;
+    box-shadow: var(--shadow-sm);
+  }
+  .premium-input:focus {
+    border-color: var(--color-brand-primary);
+    box-shadow: 0 0 0 3px rgba(5, 150, 105, 0.12);
+  }
+
+  /* Buttons */
+  .premium-btn-primary {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    padding: 10px 20px;
+    background-color: var(--color-brand-primary);
+    color: #ffffff;
+    font-weight: 600;
+    font-size: 13px;
+    border-radius: 12px;
+    border: 1px solid rgba(5, 150, 105, 0.1);
+    box-shadow: 0 4px 12px rgba(5, 150, 105, 0.15);
+    cursor: pointer;
+    transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+  }
+  .premium-btn-primary:hover:not(:disabled) {
+    background-color: var(--color-brand-dark);
+    box-shadow: 0 6px 16px rgba(5, 150, 105, 0.25);
+    transform: translateY(-1px);
+  }
+  .premium-btn-primary:active:not(:disabled) {
+    transform: translateY(0) scale(0.98);
+  }
+  .premium-btn-primary:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+    box-shadow: none;
+  }
+
+  .premium-btn-secondary {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    padding: 10px 18px;
+    background-color: #ffffff;
+    border: 1px solid #e2e8f0;
+    color: #475569;
+    font-weight: 500;
+    font-size: 13px;
+    border-radius: 12px;
+    box-shadow: var(--shadow-sm);
+    cursor: pointer;
+    transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+  }
+  .premium-btn-secondary:hover {
+    background-color: #f8fafc;
+    border-color: #cbd5e1;
+    color: #0f172a;
+    transform: translateY(-1px);
+  }
+  .premium-btn-secondary:active {
+    transform: translateY(0) scale(0.98);
+  }
+
+  /* Status Badges */
+  .badge-danger  { @apply px-3 py-1 text-[10px] font-bold uppercase tracking-wider rounded-full bg-red-50 text-red-700 border border-red-200/60; }
+  .badge-warning { @apply px-3 py-1 text-[10px] font-bold uppercase tracking-wider rounded-full bg-amber-50 text-amber-800 border border-amber-200/60; }
+  .badge-success { @apply px-3 py-1 text-[10px] font-bold uppercase tracking-wider rounded-full bg-emerald-50 text-emerald-700 border border-emerald-200/60; }
+  .badge-info    { @apply px-3 py-1 text-[10px] font-bold uppercase tracking-wider rounded-full bg-cyan-50 text-cyan-700 border border-cyan-200/60; }
+  .badge-neutral { @apply px-3 py-1 text-[10px] font-bold uppercase tracking-wider rounded-full bg-slate-100 text-slate-650 border border-slate-200/60; }
+}
+
+/* ── Interactive Telemetry Grid Pattern Background ───────────────────── */
+.premium-grid-overlay {
+  background-image:
+    linear-gradient(rgba(5, 150, 105, 0.012) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(5, 150, 105, 0.012) 1px, transparent 1px);
+  background-size: 24px 24px;
+}
+
+/* ── Markdown in Chat ───────────────────────────────────────────────── */
+.chat-message-markdown p {
+  margin-bottom: 6px;
+  line-height: 1.6;
+}
+.chat-message-markdown p:last-child {
+  margin-bottom: 0;
+}
+.chat-message-markdown ul,
+.chat-message-markdown ol {
+  margin-left: 18px;
+  margin-bottom: 6px;
+  list-style-type: disc;
+}
+.chat-message-markdown li {
+  margin-bottom: 4px;
+  font-size: 13px;
+  line-height: 1.5;
+}
+.chat-message-markdown strong {
+  font-weight: 600;
+}
+.chat-message-markdown em {
+  font-style: italic;
+}
+.chat-message-markdown code {
+  background-color: #f1f5f9;
+  color: #065f46;
+  padding: 2px 4px;
+  border-radius: 6px;
+  font-family: var(--font-mono);
+  font-size: 11px;
+  border: 1px solid #e2e8f0;
+}
+
+/* ── Print Styles (Animal Welfare Audit Reports) ─────────────────────── */
+@media print {
+  body {
+    background: #ffffff !important;
+    color: #000000 !important;
+  }
+  .no-print { display: none !important; }
+  .premium-card {
+    background: #ffffff !important;
+    border: 1px solid #cbd5e1 !important;
+    box-shadow: none !important;
+  }
+}
