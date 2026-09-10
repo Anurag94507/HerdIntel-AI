@@ -13,34 +13,18 @@ const app = express();
 app.use(cors());
 app.use(express.json());
 
-// Support both /api/* and /* route matchers for serverless functions
 app.use('/api/dashboard', dashboardRoutes);
-app.use('/dashboard',     dashboardRoutes);
-
 app.use('/api/engine',    engineRoutes);
-app.use('/engine',        engineRoutes);
-
 app.use('/api/reports',   reportsRoutes);
-app.use('/reports',       reportsRoutes);
-
 app.use('/api/alerts',    alertsRoutes);
-app.use('/alerts',        alertsRoutes);
-
 app.use('/api/cows',      cowsRoutes);
-app.use('/cows',          cowsRoutes);
-
 app.use('/api/chat',      chatRoutes);
-app.use('/chat',          chatRoutes);
-
 app.use('/api/finances',  financesRoutes);
-app.use('/finances',      financesRoutes);
 
-const healthHandler = (_req, res) => {
+app.get('/api/health', (_req, res) => {
   res.json({ status: 'ok', platform: 'vercel', timestamp: new Date().toISOString() });
-};
+});
 
-app.get('/api/health', healthHandler);
-app.get('/health', healthHandler);
-app.get('/', healthHandler);
-
-export default app;
+export default function handler(req, res) {
+  return app(req, res);
+}
